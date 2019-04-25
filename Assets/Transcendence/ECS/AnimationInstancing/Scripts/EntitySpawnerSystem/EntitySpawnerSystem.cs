@@ -1,5 +1,6 @@
 using Transcendence.AnimationInstancing;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -17,7 +18,7 @@ namespace Transcendence.ECS.Util
         {
             public EntityCommandBuffer commandBuffer;
 
-            public void Execute(Entity entity, int index, ref EntitySpawner entitySpawner, ref LocalToWorld spawnerLocalToWorld)
+            public void Execute(Entity entity, int index, ref EntitySpawner entitySpawner, [ReadOnly] ref LocalToWorld spawnerLocalToWorld)
             {
                 Random random = new Random(346273);
                 for (int x = 0; x < entitySpawner.numX; x++)
@@ -26,15 +27,14 @@ namespace Transcendence.ECS.Util
                     {
                         var instance = commandBuffer.Instantiate(entitySpawner.prefab);
                         
-                        commandBuffer.SetComponent(instance, new AnimatedObject
+                        commandBuffer.AddComponent(instance, new AnimationPhase
                         {
-                            animationPhase = random.NextFloat(),
-                            animationSpeed = 1
+                            value = random.NextFloat()
                         });
                         
                         commandBuffer.SetComponent(instance, new Rotation
                         {
-                            Value = quaternion.AxisAngle(math.up(), random.NextFloat() * 2f * 3.14159265f)
+                            Value = quaternion.AxisAngle(math.up(), random.NextFloat() * 2f * 3.141592654f)
                         });
                         
                         var position = math.transform(spawnerLocalToWorld.Value, new float3(x*entitySpawner.gap, 0, z*entitySpawner.gap));

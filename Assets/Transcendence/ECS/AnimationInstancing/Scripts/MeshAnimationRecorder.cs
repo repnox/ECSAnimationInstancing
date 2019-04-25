@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,6 +17,8 @@ namespace Transcendence.AnimationInstancing
         public bool generateNewMesh;
 
         public Animator animator;
+
+        public int maxTextureDimension = 4096;
 
         private SkinnedMeshRenderer _skinnedMeshRenderer;
 
@@ -52,29 +55,57 @@ namespace Transcendence.AnimationInstancing
             }
             else if (!_exported)
             {
-                ExportAsPng();
+                ExportAssets();
 
                 _exported = true;
             }
         }
 
-        private void ExportAsPng()
+        private void ExportAssets()
         {
             if (_animation.Count > 0)
             {
+                int numVertices = _animation[0].Length;
+                int numAnimationFrames = _animation.Count + 1;
+                
+                int textureWidth;
+                int textureHeight;
+                if (numVertices > maxTextureDimension)
+                {
+                    textureHeight = maxTextureDimension;
+                    textureWidth = numAnimationFrames * (numVertices / maxTextureDimension + (numVertices % maxTextureDimension > 0 ? 1 : 0));
+                }
+                else
+                {
+                    textureHeight = numVertices;
+                    textureWidth = numAnimationFrames;
+                }
+                
                 Texture2D texture2D =
-                    new Texture2D(_animation.Count, _animation[0].Length, TextureFormat.RGBAFloat, false);
+                    new Texture2D(textureWidth, textureHeight, TextureFormat.RGBAFloat, false);
 
                 int frameIndex = 0;
-                int vertexIndex = 0;
+                int vertexIndex;
+                int track;
                 foreach (Vector3[] vertices in _animation)
                 {
                     vertexIndex = 0;
+                    track = 0;
                     foreach (Vector3 vertex in vertices)
                     {
-                        texture2D.SetPixel(frameIndex, vertexIndex, new Color(vertex.x, vertex.y, vertex.z));
-
+                        var xPos = frameIndex + track*numAnimationFrames;
+                        var color = new Color(vertex.x, vertex.y, vertex.z);
+                        texture2D.SetPixel(xPos, vertexIndex, color);
+                        if (frameIndex == 0)
+                        {
+                            texture2D.SetPixel(xPos + numAnimationFrames - 1, vertexIndex, color);
+                        }
                         vertexIndex++;
+                        if (vertexIndex >= textureHeight)
+                        {
+                            vertexIndex = 0;
+                            track++;
+                        }
                     }
 
                     frameIndex++;
@@ -87,28 +118,35 @@ namespace Transcendence.AnimationInstancing
                 {
                     Mesh mesh = copyMesh(_skinnedMeshRenderer.sharedMesh);
 
-                    Dictionary<Vector3, int> vertexPositions = new Dictionary<Vector3, int>();
+                    Dictionary<Vector3, Color> vertexPositions = new Dictionary<Vector3, Color>();
 
+                    double xOffset = 1.0 / textureWidth / 2;
+                    double yOffset = 1.0 / textureHeight / 2;
+                    int column = 0;
+                    int yPos = 0;
                     for (int i = 0; i < mesh.vertices.Length; i++)
                     {
+                        if (yPos >= textureHeight)
+                        {
+                            column++;
+                            yPos = 0;
+                        }
                         var meshVertex = mesh.vertices[i];
                         if (!vertexPositions.ContainsKey(meshVertex))
                         {
-                            vertexPositions.Add(meshVertex, i);
+                            double red = xOffset + (double)(column * numAnimationFrames) / textureWidth;
+                            double green = yOffset + (double)yPos/ textureHeight;
+                            
+                            vertexPositions.Add(meshVertex, new Color((float)red, (float)green, 0));
                         }
+
+                        yPos++;
                     }
 
                     Color[] newColors = new Color[mesh.vertices.Length];
-                    //Vector2[] newUv2 = new Vector2[mesh.vertices.Length];
-                    float offset = 1f / mesh.vertices.Length / 2;
                     for (int i = 0; i < mesh.vertices.Length; i++)
                     {
-                        float r = vertexPositions[mesh.vertices[i]];
-                        var value = offset + r / mesh.vertices.Length;
-                        //var value = Random.Range(0f,1f);
-                        var vertexColor = new Color(value, 0, 0, 0);
-                        //newUv2[i] = new Vector2(value, 0);
-                        newColors[i] = vertexColor;
+                        newColors[i] = vertexPositions[mesh.vertices[i]];
                     }
 
                     //mesh.uv2 = newUv2;

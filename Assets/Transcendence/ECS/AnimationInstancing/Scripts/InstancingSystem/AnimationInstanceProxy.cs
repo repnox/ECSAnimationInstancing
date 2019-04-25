@@ -16,9 +16,7 @@ namespace Transcendence.AnimationInstancing
 
         public Material material;
 
-        public float animationSpeed;
-
-        public float animationPhase;
+        public AnimationSettings animationSettings;
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
@@ -33,8 +31,7 @@ namespace Transcendence.AnimationInstancing
             
             var animatedObject = new AnimatedObject
             {
-                animationSpeed = animationSpeed,
-                animationPhase = animationPhase
+                animationSettings = animationSettings
             };
             dstManager.AddComponentData(entity, animatedObject);
         }

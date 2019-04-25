@@ -1,4 +1,4 @@
-﻿Shader "Custom/AnimationShader"
+﻿Shader "Transcendence/AnimationShader"
 {
     Properties
     {

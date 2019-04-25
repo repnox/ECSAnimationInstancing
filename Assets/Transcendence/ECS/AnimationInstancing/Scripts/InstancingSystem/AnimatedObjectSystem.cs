@@ -119,26 +119,25 @@ namespace Transcendence.AnimationInstancing
         }
 
         [BurstCompile]
-        struct CalculateAnimationDataJob : IJobForEachWithEntity<AnimatedObject, RenderedObject, LocalToWorld>
+        struct CalculateAnimationDataJob : IJobForEachWithEntity<AnimatedObject, AnimationPhase, RenderedObject, LocalToWorld>
         {
             
             public NativeArray<float4x4> transformations;
             public NativeArray<float4> animationSettings;
             public NativeArray<float> animationPhases;
 
-            public void Execute(Entity entity, int index, ref AnimatedObject animatedObject, ref RenderedObject renderedObject, ref LocalToWorld localToWorld)
+            public void Execute(Entity entity, int index, [ReadOnly] ref AnimatedObject animatedObject, [ReadOnly] ref AnimationPhase animationPhase, [ReadOnly] ref RenderedObject renderedObject, [ReadOnly] ref LocalToWorld localToWorld)
             {
                 transformations[index] = math.mul(localToWorld.Value, 
                     float4x4.EulerXYZ(math.radians(renderedObject.meshRotation)));
-                animationSettings[index] = new float4(0, 0, animatedObject.animationSpeed, 1);
-                animationPhases[index] = animatedObject.animationPhase;
+                animationSettings[index] = new float4(0, 0, animatedObject.animationSettings.animationSpeed, animatedObject.animationSettings.animationDurationRatio);
+                animationPhases[index] = animationPhase.value;
             }
         }
 
         protected override void OnUpdate()
         {
-
-            EntityQuery query = GetEntityQuery(typeof(AnimatedObject), typeof(RenderedObject), typeof(LocalToWorld));
+            EntityQuery query = GetEntityQuery(typeof(AnimatedObject), typeof(AnimationPhase), typeof(RenderedObject), typeof(LocalToWorld));
             var renderedObjects = query.ToComponentDataArray<RenderedObject>(Allocator.TempJob);
 
             CalculateAnimationDataJob calculateAnimationDataJob = new CalculateAnimationDataJob

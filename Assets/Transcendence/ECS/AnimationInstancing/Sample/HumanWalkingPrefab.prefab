@@ -49,9 +49,14 @@ MonoBehaviour:
   mesh: {fileID: 4300000, guid: 66920dcb93a0f4342a882ed1d860d051, type: 2}
   meshRotation: {x: -90, y: 90, z: 0}
   material: {fileID: 2100000, guid: e0b38dad439b8494c96ee232fd8150fe, type: 2}
-  animationSpeed: 1
-  randomPhase: 1
-  animationPhase: 0
+  animationSettings:
+    textureIndex: 0
+    positionOffsetPixels:
+      x: 0
+      y: 0
+    animationSpeed: 1
+    animationDurationRatio: 1
+    animationPhase: 0
 --- !u!114 &6179528696213214520
 MonoBehaviour:
   m_ObjectHideFlags: 0

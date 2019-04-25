@@ -12,8 +12,8 @@ namespace Transcendence.AnimationInstancing
         {
             var proxy = GetComponent<AnimationInstanceProxy>();
             var materialPropertyBlock = new MaterialPropertyBlock();
-            materialPropertyBlock.SetVector("_Anim", new Vector4(0, 0, proxy.animationSpeed, 1));
-            materialPropertyBlock.SetFloat("_AnimPhase", proxy.animationPhase);
+            //materialPropertyBlock.SetVector("_Anim", new Vector4(0, 0, proxy.animationSpeed, 1));
+            //materialPropertyBlock.SetFloat("_AnimPhase", proxy.animationPhase);
             Matrix4x4 transformation = transform.localToWorldMatrix * Matrix4x4.Rotate(
                                            quaternion.Euler(proxy.meshRotation*Mathf.Deg2Rad, math.RotationOrder.XYZ)
                                         );
