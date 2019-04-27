@@ -187,14 +187,14 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingLayerMask: 2004877315
+  m_RenderingLayerMask: 461373440
   m_Lightmapping: 1
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 3.53318e-40, y: 0, z: -3.57627e-30, w: 3.5724674e+30}
+  m_BoundingSphereOverride: {x: 0, y: 2.3509887e-38, z: -2.306406e+18, w: -5.169879e-26}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -243,8 +243,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 5876021769234841081, guid: 3ea85cf4f2522f1449760b414633019a, type: 3}
-  numX: 100
-  numZ: 100
+  numX: 30
+  numZ: 30
   gap: 1
 --- !u!4 &206212555
 Transform:

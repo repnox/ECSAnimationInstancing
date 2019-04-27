@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1db70642fd5ed744b6bc4ba22bc8955, type: 3}
+  m_Name: MummyAnimationData
+  m_EditorClassIdentifier: 
+  currentAnimationIndex: 0
+  animationSettings:
+  - animationName: Walk
+    textureIndex: 0
+    positionOffsetPixels: {x: 0, y: 0}
+    animationSpeed: 0.05
+    animationDurationRatio: 0.0519
+    animationPhase: 0
